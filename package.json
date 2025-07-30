@@ -10,9 +10,13 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.27.1",
+    "@neondatabase/serverless": "^1.0.1",
     "@radix-ui/react-slot": "^1.2.3",
+    "axios": "^1.11.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.1",
+    "drizzle-orm": "^0.44.4",
     "lucide-react": "^0.532.0",
     "next": "15.4.4",
     "react": "^18.2.0",
@@ -21,7 +25,9 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "drizzle-kit": "^0.31.4",
     "tailwindcss": "^4",
+    "tsx": "^4.20.3",
     "tw-animate-css": "^1.3.6"
   }
 }
