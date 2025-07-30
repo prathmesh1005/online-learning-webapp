@@ -5,7 +5,7 @@ const provider = ({children}) => {
 
     const {user} = usserUser();
     const CreateNewUser=async()=>{
-        const result = await axios.post('/api/user',{
+        const result = await axios.post('/api/user',{``
             name:user?.fullname,
             email:user?.primaryEmailAddress?.emailAddress
         });
