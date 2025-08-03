@@ -20,7 +20,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider>
+    
+      <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body
           suppressHydrationWarning
@@ -34,6 +35,7 @@ export default function RootLayout({ children }) {
          
         </body>
       </html>
-    </ClerkProvider>
+    </ClerkProvider> 
+   
   );
 }

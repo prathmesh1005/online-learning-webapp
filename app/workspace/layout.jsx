@@ -1,11 +1,13 @@
 import React from 'react'
+import WorkspaceProvider from './provider'
 
-const Workspacelayout = ({children}) => {
+
+function WorkspaceLayout({ children }) {
   return (
-    <div>
-      
-    </div>
+    <WorkspaceProvider>
+            {children}
+    </WorkspaceProvider>
   )
 }
 
-export default Workspacelayout
+export default WorkspaceLayout
