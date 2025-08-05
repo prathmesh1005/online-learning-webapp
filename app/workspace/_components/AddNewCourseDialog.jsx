@@ -19,8 +19,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Sparkle } from 'lucide-react';
+import { Loader2Icon, Sparkle } from 'lucide-react';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 function AppNewCourseDialog({children}) {
+  
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData]=useState({
     name:'',
@@ -40,10 +44,27 @@ function AppNewCourseDialog({children}) {
     
   }
 
-  const onGenerate=()=>{
+  const onGenerate=async()=>{
     console.log(formData);
-    
+    const courseId = uuidv4();
+    try{
+
+      setLoading(true);
+      const result = await axios.post('/api/geenerate-course-layout',
+        {...formData,
+          courseId : courseId
+
+        });
+      console.log(result.data);
+      setLoading(false);
+    }
+
+    catch(error){
+      console.error("Error generating course layout:", error);
+      setLoading(false);
+    }
   }
+
   return (
     <Dialog>
   <DialogTrigger asChild>{children}</DialogTrigger>
@@ -92,7 +113,9 @@ function AppNewCourseDialog({children}) {
            </div>
 
            <div className='mt-5'>
-            <Button className={'w-full'} onClick={onGenerate}> <Sparkle /> Generate Course </Button>
+            <Button className={'w-full'} onClick={onGenerate} disabled={loading}>  
+              {loading ? <Loader2Icon className='animate-spin'/>:
+              <Sparkle />} Generate Course </Button>
            </div>
         </div>
       </DialogDescription>
