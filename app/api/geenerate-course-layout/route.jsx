@@ -102,10 +102,15 @@ export async function POST(req) {
 
   //Save to Database
   const result = await db.insert(coursesTable).values({
-    ...formData,
+    cid: courseId,
+    name: JSONResp.course.name,
+    description: JSONResp.course.description,
+    noOfChapters: JSONResp.course.noOfChapters,
+    includeVideos: JSONResp.course.includeVideo,
+    level: JSONResp.course.level,
+    category: JSONResp.course.category,
     courseJson: JSONResp,
     userEmail: user?.primaryEmailAddress?.emailAddress,
-    cid:courseId
   });
 
   return NextResponse.json({courseId : courseId});

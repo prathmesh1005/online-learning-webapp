@@ -43,6 +43,7 @@ function AppNewCourseDialog({children}) {
     console.log(formData);
     
   }
+  const router = useRouter();
 
   const onGenerate=async()=>{
     console.log(formData);
@@ -57,6 +58,7 @@ function AppNewCourseDialog({children}) {
         });
       console.log(result.data);
       setLoading(false);
+      router.push(`/workspace/course/` + result.data?.courseId);
     }
 
     catch(error){
