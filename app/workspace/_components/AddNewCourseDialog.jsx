@@ -1,4 +1,5 @@
 import React from 'react'
+
 import {
   Dialog,
   DialogContent,
@@ -22,6 +23,8 @@ import {
 import { Loader2Icon, Sparkle } from 'lucide-react';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
+import { useRouter } from 'next/navigation';
+
 function AppNewCourseDialog({children}) {
   
   const [loading, setLoading] = useState(false);
@@ -62,8 +65,13 @@ function AppNewCourseDialog({children}) {
     }
 
     catch(error){
-      console.error("Error generating course layout:", error);
       setLoading(false);
+      if (error.response && error.response.data && error.response.data.error) {
+        alert("AI failed to generate a valid course. Please try again or use shorter input.");
+      } else {
+        alert("An unexpected error occurred. Please try again.");
+      }
+      console.error("Error generating course layout:", error);
     }
   }
 

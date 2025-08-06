@@ -1,5 +1,5 @@
 CREATE TABLE "courses" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
 	"cid" varchar(255) NOT NULL,
 	"name" varchar(255),
 	"description" varchar(255),
@@ -12,7 +12,7 @@ CREATE TABLE "courses" (
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
 	"subscription_id" varchar(255),
