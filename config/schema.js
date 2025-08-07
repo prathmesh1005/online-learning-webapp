@@ -24,4 +24,5 @@ export const coursesTable = pgTable("courses", {
   category: varchar("catetgory", { length: 255 }), // Match the actual database column name
   courseJson: json("course_json"),
   userEmail: varchar("user_email", { length: 255 }).references(() => usersTable.email),
+  bannerImageURL: varchar("banner_image_url", { length: 255 }),
 });

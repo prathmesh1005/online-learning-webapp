@@ -49,7 +49,9 @@ Schema:
 }
 
 User Input:`;
-
+  const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY,
+  });
 async function getValidAIResponse(ai, model, config, contents, maxRetries = 2) {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     const response = await ai.models.generateContent({ model, config, contents });
@@ -83,10 +85,8 @@ export async function POST(req) {
   // To run this code you need to install the following dependencies:
   // npm install @google/genai mime
   // npm install -D @types/node
+  
 
-  const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY,
-  });
   const tools = [
     {
       googleSearch: {
@@ -119,6 +119,23 @@ export async function POST(req) {
     return NextResponse.json({ error: "Failed to parse AI response after retries" }, { status: 500 });
   }
 
+  // Generate banner image
+  const ImagePrompt = JSONResp.course?.bannerImagePrompt;
+  let bannerImageURL = null;
+  
+  if (ImagePrompt) {
+    try {
+      bannerImageURL = await GenerateImage(ImagePrompt);
+    } catch (error) {
+      console.error("Error generating banner image:", error);
+      // Use a default image URL if generation fails
+      bannerImageURL = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1024&h=576&fit=crop";
+    }
+  } else {
+    // Use a default image URL if no prompt is provided
+    bannerImageURL = "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1024&h=576&fit=crop";
+  }
+
   //Save to Database
   const result = await db.insert(coursesTable).values({
     cid: courseId,
@@ -127,19 +144,18 @@ export async function POST(req) {
     noOfChapters: JSONResp.course.noOfChapters,
     includeVideos: JSONResp.course.includeVideo,
     level: JSONResp.course.level,
+    bannerImageURL: bannerImageURL,
     category: JSONResp.course.category,
     courseJson: JSONResp,
     userEmail: user?.primaryEmailAddress?.emailAddress,
   });
 
   return NextResponse.json({courseId : courseId});
-  
 }
-
 
 const GenerateImage = async(ImagePrompt) => {
   const BASE_URL='https://aigurulab.tech';
-const result = await axios.post(BASE_URL+'/api/generate-image',
+  const result = await axios.post(BASE_URL+'/api/generate-image',
         {
             width: 1024,
             height: 1024,

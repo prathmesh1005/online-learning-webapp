@@ -61,7 +61,7 @@ function AppNewCourseDialog({children}) {
         });
       console.log(result.data);
       setLoading(false);
-      router.push(`/workspace/course/` + result.data?.courseId);
+      router.push(`/workspace/edit-course/` + result.data?.courseId);
     }
 
     catch(error){

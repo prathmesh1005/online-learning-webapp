@@ -23,4 +23,5 @@ export const courses = pgTable("courses", {
 	catetgory: varchar(),
 	courseJson: json(),
 	userEmail: varchar(),
+	bannerImageURL: varchar().default('')
 });
