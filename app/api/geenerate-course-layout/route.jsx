@@ -49,9 +49,11 @@ Schema:
 }
 
 User Input:`;
-  const ai = new GoogleGenAI({
+  
+export const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
   });
+
 async function getValidAIResponse(ai, model, config, contents, maxRetries = 2) {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     const response = await ai.models.generateContent({ model, config, contents });

@@ -2,13 +2,15 @@
 import React, { useEffect,useState } from 'react'
 import { useParams } from 'next/navigation';
 import axios from 'axios';
-import CourseInfo from './_components/CourseInfo';
-import ChapterTopicList from './_components/ChapterTopicList'
+import CourseInfo from '../_components/CourseInfo';
+import ChapterTopicList from '../_components/ChapterTopicList'
 
 function EditCourse() {
     const { courseId } = useParams();
     const[loading,setLoading]=useState(false);
     const[course,setCourse]=useState();
+    
+    
     useEffect(()=>{
         GetCourseInfo();
     }, [])
