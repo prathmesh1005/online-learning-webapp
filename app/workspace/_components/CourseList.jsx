@@ -1,10 +1,25 @@
 'use client'
-import React ,{useState}from 'react';
+import React ,{useEffect, useState}from 'react';
 import { Button } from "@/components/ui/button";
 import AddNewCourseDialog from './AddNewCourseDialog';
+import CourseCard from './CourseCard';
 import Image from 'next/image';
+import axios from 'axios';
+import { useUser } from '@clerk/nextjs';
+
 function CourseList() {
     const [courseList,setCourseList]=useState([]);
+    const {user} =useUser();
+    useEffect(() =>{
+      if (user) {
+        GetCourseList();
+      }
+    } , [user])
+    const GetCourseList=async()=>{
+      const result=await axios.get('/api/courses');
+      console.log(result.data);
+      setCourseList(result.data);
+    }
   return (
     <div className='mt-10'>
        <h2 className='font-bold text-3xl'>Course List</h2>
@@ -12,13 +27,16 @@ function CourseList() {
        {courseList?.length==0?
        <div className='flex p-7 items-center justify-center flex-col border rounded-xl mt-2 bg-secondary'>
         <Image src={'/online-education.png'}alt ='edu' width={120} height={120}/>
-        <h2 className='my-2 text-xl font-bold'>Looks Like you haven't created any courses yet</h2>
+        <h2 className='my-2 text-xl font-bold'>Looks Like you haven&apos;t created any courses yet</h2>
         <AddNewCourseDialog>
            <Button>+ Create your first course </Button>
         </AddNewCourseDialog>
        </div>:
-            <div>
-                List Of Courses
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5'>
+             {courseList?.map((course,index) => (
+                <CourseCard course={course} key={index} />
+              ))}
+
             </div>}
     </div>
   )

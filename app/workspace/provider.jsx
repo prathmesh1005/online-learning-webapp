@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { SidebarProvider, SidebarTrigger } from "@/@/components/ui/sidebar"
+import { SidebarProvider } from "@/@/components/ui/sidebar"
 import { AppSidebar } from '@/app/workspace/_components/AppSidebar'   
 import AppHeader from './_components/AppHeader'  
 function WorkspaceProvider({children}) {

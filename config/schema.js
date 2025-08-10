@@ -1,3 +1,4 @@
+import { unique } from "drizzle-orm/gel-core";
 import { 
   pgTable, 
   integer, 
@@ -15,7 +16,7 @@ export const usersTable = pgTable("users", {
 
 export const coursesTable = pgTable("courses", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  cid: varchar("cid", { length: 255 }).notNull(),
+  cid: varchar("cid").notNull().unique(),
   name: varchar("name", { length: 255 }),
   description: varchar("description", { length: 255 }),
   noOfChapters: integer("no_of_chapters").notNull(),
@@ -26,4 +27,12 @@ export const coursesTable = pgTable("courses", {
   userEmail: varchar("user_email", { length: 255 }).references(() => usersTable.email),
   bannerImageURL: varchar("banner_image_url", { length: 255 }),
   courseContent: json().default({}),
-});
+})
+
+export const enrollCourseTable=pgTable('enrollCourse',{
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    cid:varchar('cid').references(()=>coursesTable.cid),
+    userEmail: varchar('userEmail').references(()=> usersTable.email).notNull(),
+    completedChapters:json()
+
+})

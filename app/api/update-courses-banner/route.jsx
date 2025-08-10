@@ -23,7 +23,7 @@ const GenerateImage = async(ImagePrompt) => {
   return result.data.image;
 }
 
-export async function POST(req) {
+export async function POST() {
   try {
     // Get all courses that don't have bannerImageURL
     const courses = await db.select().from(coursesTable);
@@ -80,3 +80,4 @@ export async function POST(req) {
     );
   }
 }
+

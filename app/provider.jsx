@@ -1,5 +1,5 @@
 "use client"
-import React,{useState, useEffect } from 'react'
+import React,{useState, useEffect, useCallback } from 'react'
 import {useUser} from '@clerk/nextjs'
 import axios from 'axios'
 import {UserDetailContext} from '../context/UserDetailContext'
@@ -10,11 +10,7 @@ const Provider = ({children}) => {
 
     const [userDetail, setUserDetail] = useState();
 
-    useEffect(()=>{
-      user && CreateNewUser();
-
-    },[user]) 
-    const CreateNewUser=async()=>{
+    const CreateNewUser=useCallback(async()=>{
         const result = await axios.post('/api/user',{
             name:user?.fullName,
             email:user?.primaryEmailAddress?.emailAddress
@@ -22,7 +18,13 @@ const Provider = ({children}) => {
         console.log(result.data);
         setUserDetail(result.data);
 
-    }
+    },[user])
+    
+    useEffect(()=>{
+      if (user) {
+        CreateNewUser();
+      }
+    },[user, CreateNewUser])
 
   return (
     <UserDetailContext.Provider value={{userDetail,setUserDetail}}>

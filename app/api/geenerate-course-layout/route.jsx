@@ -50,7 +50,7 @@ Schema:
 
 User Input:`;
   
-export const ai = new GoogleGenAI({
+const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
   });
 
@@ -139,7 +139,7 @@ export async function POST(req) {
   }
 
   //Save to Database
-  const result = await db.insert(coursesTable).values({
+  await db.insert(coursesTable).values({
     cid: courseId,
     name: JSONResp.course.name,
     description: JSONResp.course.description,

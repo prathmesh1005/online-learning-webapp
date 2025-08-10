@@ -1,9 +1,13 @@
 import axios from "axios";
-import { ai } from "../geenerate-course-layout/route";
+import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
 import { db } from "@/config/db";
 import { coursesTable } from "@/config/schema";
 import { eq } from "drizzle-orm";
+
+const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY,
+});
 
 
 
