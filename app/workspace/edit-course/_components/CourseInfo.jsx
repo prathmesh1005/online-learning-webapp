@@ -1,11 +1,12 @@
 import { Button } from '@/components/ui/button';
-import { Clock, TrendingUp,Book } from 'lucide-react';
+import { Clock, TrendingUp,Book, PlayCircle } from 'lucide-react';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
-function CourseInfo({course}) {
+function CourseInfo({course,viewCourse}) {
     const courseLayout=course?.courseJson.course;
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -59,9 +60,13 @@ function CourseInfo({course}) {
                         </section>
                     </div>
                 </div>
+                {!viewCourse? 
                 <Button onClick={GenerateCourseContent} disabled={loading}>
                     {loading ? 'Generating...' : 'Generate Content'}
-                </Button>
+                </Button>: 
+                <Link href={'/course/' + (course?.cid || '')}>
+                    <Button> <PlayCircle/> Continue Learning </Button></Link>} 
+                
             </div>
             {course?.bannerImageURL && (
                 <div className="mt-6 md:mt-0 md:w-[400px] md:h-[240px]">

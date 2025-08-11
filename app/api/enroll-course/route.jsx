@@ -25,24 +25,44 @@ export async function POST(req) {
 
 }
 
-export async function GET() {
+export async function GET(req) {
   try {
-    const user = await currentUser(); 
+    const user = await currentUser();
+    const { searchParams } = new URL(req.url); 
+    const courseId = searchParams.get('courseId');
 
-    if (!user?.primaryEmailAddress?.emailAddress) {
-      return NextResponse.json({ error: "User not logged in or email missing" }, { status: 401 });
+    if (courseId) {
+      const result = await db
+        .select()
+        .from(coursesTable)
+        .innerJoin(enrollCourseTable, eq(coursesTable.cid, enrollCourseTable.cid))
+        .where(
+          and(
+            eq(enrollCourseTable.userEmail, user.primaryEmailAddress.emailAddress),
+            eq(enrollCourseTable.cid, courseId)
+          )
+        );
+
+      return NextResponse.json(result);
+    } else {
+      if (!user?.primaryEmailAddress?.emailAddress) {
+        return NextResponse.json(
+          { error: "User not logged in or email missing" },
+          { status: 401 }
+        );
+      }
+
+      const result = await db
+        .select()
+        .from(coursesTable)
+        .innerJoin(enrollCourseTable, eq(coursesTable.cid, enrollCourseTable.cid))
+        .where(eq(enrollCourseTable.userEmail, user.primaryEmailAddress.emailAddress))
+        .orderBy(desc(enrollCourseTable.id));
+
+      return NextResponse.json(result);
     }
-
-    const result = await db
-      .select()
-      .from(coursesTable)
-      .innerJoin(enrollCourseTable, eq(coursesTable.cid, enrollCourseTable.cid))
-      .where(eq(enrollCourseTable.userEmail, user.primaryEmailAddress.emailAddress))
-      .orderBy(desc(enrollCourseTable.id)); // 
-
-    return NextResponse.json(result);
   } catch (error) {
-    console.error(" GET /api/enroll-course failed:", error);
+    console.error("GET /api/enroll-course failed:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -53,7 +53,7 @@ function EnrollCourseCard({course, enrollCourse}) {
                         Progress <span>{progressValue}%</span>
                     </h2>
                     <Progress value={progressValue} />
-                    <Link href={'/workspace/course/' + (course?.cid || '')}>
+                    <Link href={'/workspace/view-course/' + (course?.cid || '')}>
                         <Button className={'w-full mt-3'}>
                             <PlayCircle />Continue Learning
                         </Button>
