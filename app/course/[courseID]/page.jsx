@@ -16,22 +16,21 @@ function Course() {
   }, []);
 
   const GetEnrolledCourseByID = async () => {
-  try {
-    if (!courseID) return; // Prevent API call if param isn't loaded yet
-    const { data } = await axios.get(`/api/enroll-course?courseID=${courseID}`);
-    console.log(data); // Only log to console
-    // Optionally remove this if you don't want UI update:
-    // setCourseInfo(data);
-  } catch (error) {
-    console.error("Error fetching course:", error);
-  }
-};
+    try {
+      if (!courseID) return; // Prevent API call if param isn't loaded yet
+      const { data } = await axios.get(`/api/enroll-course?courseId=${courseID}`);
+      console.log(data); // Only log to console
+      setCourseInfo(data); // Set the course info in state
+    } catch (error) {
+      console.error("Error fetching course:", error);
+    }
+  };
 
   return (
     <div>
       <AppHeader hideSiebar={true} />
       <div className='flex gap-10'>
-        <ChapterListSidebar courseInfo = {courseInfo} />
+        <ChapterListSidebar courseInfo={courseInfo} />
         <ChapterContent />
       </div>
     </div>
