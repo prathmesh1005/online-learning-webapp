@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 
 import {
     Accordion,
@@ -6,6 +6,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
+import { SelectedChapterIndexContext } from '@/context/SelectedChapterIndexContext';
 
 
 function ChapterListSidebar({ courseInfo }) {
@@ -16,6 +17,7 @@ function ChapterListSidebar({ courseInfo }) {
     // courseInfo: [{ courses: { courseContent: [...] }, enrollCourse: {...} }]
     const course = courseInfo?.[0];
     const courseContent = course?.courses?.courseContent;
+    const {selectedChapterIndex,setSelectedChapterIndex}=useContext(SelectedChapterIndexContext)
     
     console.log('ChapterListSidebar - course:', course);
     console.log('ChapterListSidebar - courseContent:', courseContent);
@@ -54,7 +56,9 @@ function ChapterListSidebar({ courseInfo }) {
             <h2 className='my-3 font-bold text-xl'>Chapters ({courseContent.length})</h2>
             <Accordion type="single" collapsible>
                 {courseContent.map((chapter, index) => (
-                    <AccordionItem value={chapter?.courseData?.chapterName || `chapter-${index}`} key={index}>
+                    <AccordionItem value={chapter?.courseData?.chapterName || `chapter-${index}`} key={index}
+                    onClick={()=> setSelectedChapterIndex(index)}
+                    >
                         <AccordionTrigger className='text-lg font-medium'>
                             {index + 1}. {chapter?.courseData?.chapterName || `Chapter ${index + 1}`}
                         </AccordionTrigger>
