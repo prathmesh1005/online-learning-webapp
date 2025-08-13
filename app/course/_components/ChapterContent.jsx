@@ -47,7 +47,6 @@ function ChapterContent({courseInfo}){
           {topics.map((topic,index)=>(
               <div key={index} className="mt-10 p-5 bg-secondary rounded-2xl">
                 <h2 className="font-bold text-2xl text-primary">{index+1}.{topic?.topic}</h2>
-                <p>{topic?.content}</p>
                 <div dangerouslySetInnerHTML={{__html:topic?.content}}
                 style={{
                   lineHeight:'2.5'

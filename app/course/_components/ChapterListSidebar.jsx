@@ -25,7 +25,7 @@ function ChapterListSidebar({ courseInfo }) {
     // If no data, show loading state
     if (!courseInfo || !course) {
         return (
-            <div className='w-80 h-screen bg-secondary p-5'>
+            <div className='w-96 h-screen bg-secondary p-5 overflow-y-auto'>
                 <h2 className='my-3 font-bold text-xl'>Chapters (0)</h2>
                 <div className='text-gray-500'>Loading course information...</div>
                 <div className='mt-4 p-3 bg-white rounded border'>
@@ -39,7 +39,7 @@ function ChapterListSidebar({ courseInfo }) {
     // If no course content, show empty state
     if (!courseContent || !Array.isArray(courseContent) || courseContent.length === 0) {
         return (
-            <div className='w-80 h-screen bg-secondary p-5'>
+            <div className='w-96 h-screen bg-secondary p-5 overflow-y-auto'>
                 <h2 className='my-3 font-bold text-xl'>Chapters (0)</h2>
                 <div className='text-gray-500'>No chapters available for this course.</div>
                 <div className='mt-4 p-3 bg-white rounded border'>
@@ -52,21 +52,21 @@ function ChapterListSidebar({ courseInfo }) {
     }
 
     return (
-        <div className='w-80 h-screen bg-secondary p-5'>
+        <div className='w-96 h-screen bg-secondary p-5 overflow-y-auto'>
             <h2 className='my-3 font-bold text-xl'>Chapters ({courseContent.length})</h2>
             <Accordion type="single" collapsible>
                 {courseContent.map((chapter, index) => (
                     <AccordionItem value={chapter?.courseData?.chapterName || `chapter-${index}`} key={index}
                     onClick={()=> setSelectedChapterIndex(index)}
                     >
-                        <AccordionTrigger className='text-lg font-medium'>
+                        <AccordionTrigger className='text-lg font-medium text-left truncate'>
                             {index + 1}. {chapter?.courseData?.chapterName || `Chapter ${index + 1}`}
                         </AccordionTrigger>
                         <AccordionContent asChild>
                             <div>
                                 {chapter?.courseData?.topics && Array.isArray(chapter.courseData.topics) ? (
                                     chapter.courseData.topics.map((topic, topicIndex) => (
-                                        <h2 key={topicIndex} className='p-3 bg-white my-1 rounded-lg'>
+                                        <h2 key={topicIndex} className='p-3 bg-white my-1 rounded-lg truncate'>
                                             {topic?.topic || `Topic ${topicIndex + 1}`}
                                         </h2>
                                     ))
