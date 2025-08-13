@@ -10,17 +10,21 @@ import { SelectedChapterIndexContext } from '@/context/SelectedChapterIndexConte
 
 
 function ChapterListSidebar({ courseInfo }) {
+
+      const {courses , enrollCourse} = courseInfo ?? '';
+
     // Debug: Log the entire courseInfo to see the actual structure
     console.log('ChapterListSidebar - Full courseInfo:', courseInfo);
-    
+
     // Based on console logs, the structure is:
     // courseInfo: [{ courses: { courseContent: [...] }, enrollCourse: {...} }]
     const course = courseInfo?.[0];
     const courseContent = course?.courses?.courseContent;
-    const {selectedChapterIndex,setSelectedChapterIndex}=useContext(SelectedChapterIndexContext)
-    
+    const { selectedChapterIndex, setSelectedChapterIndex } = useContext(SelectedChapterIndexContext)
+
     console.log('ChapterListSidebar - course:', course);
     console.log('ChapterListSidebar - courseContent:', courseContent);
+
 
     // If no data, show loading state
     if (!courseInfo || !course) {
@@ -51,28 +55,37 @@ function ChapterListSidebar({ courseInfo }) {
         );
     }
 
+    let completedChapter = enrollCourse?.completedChapter || [];
+
+
     return (
-        <div className='w-96 h-screen bg-secondary p-5 overflow-y-auto'>
+        <div className=' w-3xl h-screen bg-secondary p-5 '>
             <h2 className='my-3 font-bold text-xl'>Chapters ({courseContent.length})</h2>
             <Accordion type="single" collapsible>
                 {courseContent.map((chapter, index) => (
                     <AccordionItem value={chapter?.courseData?.chapterName || `chapter-${index}`} key={index}
-                    onClick={()=> setSelectedChapterIndex(index)}
+                        onClick={() => setSelectedChapterIndex(index)}
                     >
-                        <AccordionTrigger className='text-lg font-medium text-left truncate'>
+                        <AccordionTrigger className= {`text-lg font-medium text-left truncate 
+                            ${completedChapter.includes(chapterIndex) ? 'bg-green-100' : 'bg-white'}`}>
                             {index + 1}. {chapter?.courseData?.chapterName || `Chapter ${index + 1}`}
                         </AccordionTrigger>
                         <AccordionContent asChild>
                             <div>
                                 {chapter?.courseData?.topics && Array.isArray(chapter.courseData.topics) ? (
                                     chapter.courseData.topics.map((topic, topicIndex) => (
-                                        <h2 key={topicIndex} className='p-3 bg-white my-1 rounded-lg truncate'>
+                                        <h2
+                                            key={topicIndex}
+                                            className={`p-3 my-1 rounded-lg truncate 
+                                            ${completedChapter.includes(chapterIndex) ? 'bg-green-100' : 'bg-white'}`}
+                                        >
                                             {topic?.topic || `Topic ${topicIndex + 1}`}
                                         </h2>
                                     ))
                                 ) : (
                                     <div className='p-3 text-gray-500'>No topics available</div>
                                 )}
+
                             </div>
                         </AccordionContent>
                     </AccordionItem>

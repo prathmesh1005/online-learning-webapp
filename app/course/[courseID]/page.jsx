@@ -24,6 +24,9 @@ function Course() {
     } catch (error) {
       console.error("Error fetching course:", error);
     }
+
+    
+
   };
 
   return (
@@ -31,7 +34,7 @@ function Course() {
       <AppHeader hideSiebar={true} />
       <div className='flex gap-10'>
         <ChapterListSidebar courseInfo={courseInfo} />
-        <ChapterContent  courseInfo={courseInfo}/>
+        <ChapterContent  courseInfo={courseInfo} refreshData={()=> GetEnrolledCourseByID()} />
       </div>
     </div>
   );

@@ -44,6 +44,7 @@ export async function GET(req) {
         );
 
       return NextResponse.json(result);
+
     } else {
       if (!user?.primaryEmailAddress?.emailAddress) {
         return NextResponse.json(
@@ -65,4 +66,18 @@ export async function GET(req) {
     console.error("GET /api/enroll-course failed:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+}
+
+export async function PUT(req) {
+  const {completedChapter, courseId} = await req.json();
+
+  const user = await currentUser();
+
+  const result = await db
+    .update(enrollCourseTable)
+    .set({completedChapters: completedChapter})
+    .where(and(eq(enrollCourseTable.userEmail, user?.primaryEmailAddress?.emailAddress)))
+    .returning(enrollCourseTable);
+
+  return NextResponse.json(result);
 }
