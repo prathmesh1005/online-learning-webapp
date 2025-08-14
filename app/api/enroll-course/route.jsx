@@ -69,15 +69,33 @@ export async function GET(req) {
 }
 
 export async function PUT(req) {
-  const {completedChapter, courseId} = await req.json();
+  try {
+    const {completedChapter, courseId} = await req.json();
 
-  const user = await currentUser();
+    const user = await currentUser();
 
-  const result = await db
-    .update(enrollCourseTable)
-    .set({completedChapters: completedChapter})
-    .where(and(eq(enrollCourseTable.userEmail, user?.primaryEmailAddress?.emailAddress)))
-    .returning(enrollCourseTable);
+    if (!user?.primaryEmailAddress?.emailAddress) {
+      return NextResponse.json({ error: "User not authenticated" }, { status: 401 });
+    }
 
-  return NextResponse.json(result);
+    if (!courseId) {
+      return NextResponse.json({ error: "Course ID is required" }, { status: 400 });
+    }
+
+    const result = await db
+      .update(enrollCourseTable)
+      .set({completedChapters: completedChapter})
+      .where(
+        and(
+          eq(enrollCourseTable.userEmail, user.primaryEmailAddress.emailAddress),
+          eq(enrollCourseTable.cid, courseId)
+        )
+      )
+      .returning(enrollCourseTable);
+
+    return NextResponse.json(result);
+  } catch (error) {
+    console.error("PUT /api/enroll-course failed:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }
