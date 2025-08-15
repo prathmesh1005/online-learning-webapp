@@ -21,17 +21,12 @@ const SideBarOptions=[
    {
     title:'My Learning',
     icon: LayoutDashboard,
-    path:'/workspace/my-courses'
+    path:'/workspace/my-learning'
   },
    {
     title:'Explore Courses',
     icon: Compass,
     path:'/workspace/explore'
-  },
-   {
-    title:'AI Tools',
-    icon: PencilRulerIcon,
-    path:'/workspace/ai-tools'
   },
    {
     title:'Billing',
