@@ -34,7 +34,7 @@ const SideBarOptions=[
     path:'/workspace/ai-tools'
   },
    {
-    title:'Biling',
+    title:'Billing',
     icon: WalletCards,
     path:'/workspace/biling'
   },
