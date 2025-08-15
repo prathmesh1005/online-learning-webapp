@@ -60,11 +60,17 @@ function AppNewCourseDialog({children}) {
 
         });
       console.log(result.data);
+
+      if(result.data?.resp==='limit exceeded'){
+        alert("You have reached the limit of courses you can create. Please upgrade your plan.");
+        router.push('/workspace/billing');
+      }
       setLoading(false);
       router.push(`/workspace/edit-course/` + result.data?.courseId);
     }
 
     catch(error){
+
       setLoading(false);
       if (error.response && error.response.data && error.response.data.error) {
         alert("AI failed to generate a valid course. Please try again or use shorter input.");

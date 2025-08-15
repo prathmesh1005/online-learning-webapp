@@ -36,7 +36,7 @@ const SideBarOptions=[
    {
     title:'Billing',
     icon: WalletCards,
-    path:'/workspace/biling'
+    path:'/workspace/billing'
   },
    {
     title:'Profile',

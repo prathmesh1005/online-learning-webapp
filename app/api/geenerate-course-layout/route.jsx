@@ -6,6 +6,8 @@ import {
 } from '@google/genai';
 import axios from "axios";
 import { NextResponse } from 'next/server';
+import { has } from "@clerk/nextjs/server";
+import { auth } from '@clerk/nextjs/server';
 
 const PROMPT = `
 Generate a Learning Course based on the following user details.
@@ -82,6 +84,10 @@ async function getValidAIResponse(ai, model, config, contents, maxRetries = 2) {
 }
 
 export async function POST(req) {
+
+  const { has } = await auth()
+  const hasPremiumAccess = has({ plan: 'starter' })
+
   const {courseId ,...formData} = await req.json();
   const user = await currentUser() ;
   // To run this code you need to install the following dependencies:
@@ -113,6 +119,14 @@ export async function POST(req) {
     },
   ];
 
+  
+  if (!hasPremiumAccess) {
+    const result = await db.select().from(coursesTable)
+                          .where(eq(coursesTable.userEmail,user?.primaryEmailAddress?.emailAddress))
+    if(result.length>0){
+      return NextResponse.json({ 'resp': 'limit exceeded' });
+    }
+  }
   let JSONResp;
   try {
     JSONResp = await getValidAIResponse(ai, model, config, contents);
