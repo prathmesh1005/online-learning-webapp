@@ -1,5 +1,6 @@
 import { db } from "@/config/db";  
 import { coursesTable } from '@/config/schema';
+import { eq } from 'drizzle-orm';
 import { currentUser } from '@clerk/nextjs/server';
 import {
   GoogleGenAI,

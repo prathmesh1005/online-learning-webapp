@@ -21,62 +21,109 @@ const PROMPT = `Depends on Chapter name and Topic , Generate content for each to
     }
     : User Input:`
 
+// Helper function to add delay between API calls
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Helper function to generate content with retry logic
+async function generateChapterContent(chapter, retries = 3) {
+    for (let attempt = 0; attempt < retries; attempt++) {
+        try {
+            const config = {
+                thinkingConfig: {
+                    thinkingBudget: -1,
+                },
+            };
+            const model = 'gemini-2.5-pro';
+            const contents = [
+                {
+                    role: 'user',
+                    parts: [
+                        {
+                            text: `${PROMPT} ${JSON.stringify(chapter)}`,
+                        },
+                    ],
+                },
+            ];
+
+            const response = await ai.models.generateContent({
+                model,
+                config,
+                contents,
+            });
+
+            const rawResponse = response.candidates[0].content.parts[0].text;
+            const rawJson = rawResponse.replace('```json', '').replace('```', '');
+            const jsonResp = JSON.parse(rawJson);
+
+            const youtubeData = await GetYoutubeVideo(chapter?.chapterName);
+
+            return {
+                youtubeVideo: youtubeData,
+                courseData: jsonResp,
+            };
+        } catch (error) {
+            console.error(`Attempt ${attempt + 1} failed for chapter ${chapter?.chapterName}:`, error);
+            
+            if (error.status === 429) {
+                // Rate limit exceeded, wait longer
+                const waitTime = Math.pow(2, attempt) * 15000; // Exponential backoff: 15s, 30s, 60s
+                console.log(`Rate limit hit. Waiting ${waitTime/1000} seconds before retry...`);
+                await delay(waitTime);
+            } else if (attempt === retries - 1) {
+                // Last attempt failed, return error response
+                return {
+                    error: `Failed to generate content for chapter: ${chapter?.chapterName}`,
+                    youtubeVideo: await GetYoutubeVideo(chapter?.chapterName),
+                    courseData: null
+                };
+            } else {
+                // Other error, wait a bit before retry
+                await delay(5000);
+            }
+        }
+    }
+}
+
 export async function POST(req) {
+    try {
+        const { courseId, courseTitle, courseJson } = await req.json();
 
-    const { courseId, courseTitle, courseJson } = await req.json();
+        // Process chapters sequentially to avoid rate limits
+        const CourseContent = [];
+        for (let i = 0; i < courseJson?.course?.chapters?.length; i++) {
+            const chapter = courseJson.course.chapters[i];
+            console.log(`Processing chapter ${i + 1}/${courseJson.course.chapters.length}: ${chapter?.chapterName}`);
+            
+            const chapterContent = await generateChapterContent(chapter);
+            CourseContent.push(chapterContent);
+            
+            // Add delay between chapters to respect rate limits (except for last chapter)
+            if (i < courseJson.course.chapters.length - 1) {
+                console.log('Waiting 15 seconds before next chapter...');
+                await delay(15000); // 15 second delay between chapters
+            }
+        }
 
-    const promises = courseJson?.course?.chapters?.map(async (chapter) => {
-        const config = {
-            thinkingConfig: {
-                thinkingBudget: -1,
-            },
-        };
-        const model = 'gemini-2.5-pro';
-        const contents = [
-            {
-                role: 'user',
-                parts: [
-                    {
-                        text: `${PROMPT} ${JSON.stringify(chapter)}`,
-                    },
-                ],
-            },
-        ];
+        console.log("Generated Course Content:", JSON.stringify(CourseContent, null, 2));
 
-        const response = await ai.models.generateContent({
-            model,
-            config,
-            contents,
+        const dbResp = await db
+            .update(coursesTable)
+            .set({ courseContent: CourseContent })
+            .where(eq(coursesTable.cid, courseId));
+
+        console.log("Update result:", dbResp);
+        return NextResponse.json({
+            courseName: courseTitle,
+            CourseContent: CourseContent,
         });
 
-        const rawResponse = response.candidates[0].content.parts[0].text;
-        const rawJson = rawResponse.replace('```json', '').replace('```', '');
-        const jsonResp = JSON.parse(rawJson);
-
-        const youtubeData = await GetYoutubeVideo(chapter?.chapterName);
-
-
-        return {
-            youtubeVideo: youtubeData,
-            courseData: jsonResp,
-        };
-    });
-
-    const CourseContent = await Promise.all(promises);
-
-    console.log("Generated Course Content:", JSON.stringify(CourseContent, null, 2));
-
-    const dbResp = await db
-        .update(coursesTable)
-        .set({ courseContent: CourseContent })
-        .where(eq(coursesTable.cid, courseId));
-
-    console.log("Update result:", dbResp);
-    return NextResponse.json({
-        courseName: courseTitle,
-        CourseContent: CourseContent,
-    });
-
+    } catch (error) {
+        console.error("Error in POST function:", error);
+        return NextResponse.json(
+            { error: "Failed to generate course content" },
+            { status: 500 }
+        );
+    }
 }
 
 const YOUTUBE_BASE_URL = 'https://www.googleapis.com/youtube/v3/search';
