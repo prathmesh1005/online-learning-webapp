@@ -73,25 +73,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `WorkspaceProvider`.
-
-app\workspace\provider.jsx (6:5) @ WorkspaceProvider
-
-
-  4 | function WorkspaceProvider({children}) {
-  5 |   return (
-> 6 |     <SidebarProvider>
-    |     ^
-  7 |         <AppSidebar />
-  8 |         <SidebarTrigger />
-  9 |          {children}
-Call Stack
-17
-
-Show 15 ignore-listed frame(s)
-WorkspaceProvider
-app\workspace\provider.jsx (6:5)
-Workspacelayout
-app\workspace\layout.jsx (6:5)
+}

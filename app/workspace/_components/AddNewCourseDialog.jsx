@@ -25,14 +25,15 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { useRouter } from 'next/navigation';
 
-function AppNewCourseDialog({children}) {
+function AppNewCourseDialog({children, onCourseCreated}) {
   
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const [formData, setFormData]=useState({
     name:'',
     description:'',
-    includeCideo:false,
+    includeVideo:false,
     noOfChapters:1,
     category:'',
     level:''
@@ -65,7 +66,14 @@ function AppNewCourseDialog({children}) {
         alert("You have reached the limit of courses you can create. Please upgrade your plan.");
         router.push('/workspace/billing');
       }
+      
+      // Clear cache so the new course will appear
+      sessionStorage.removeItem('myCourses');
+      sessionStorage.removeItem('myCoursesTime');
+      if (onCourseCreated) onCourseCreated();
+      
       setLoading(false);
+      setOpen(false); // Close the dialog
       router.push(`/workspace/edit-course/` + result.data?.courseId);
     }
 
@@ -78,11 +86,11 @@ function AppNewCourseDialog({children}) {
         alert("An unexpected error occurred. Please try again.");
       }
       console.error("Error generating course layout:", error);
-    }
+    } 
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
   <DialogTrigger asChild>{children}</DialogTrigger>
   <DialogContent>
     <DialogHeader>
